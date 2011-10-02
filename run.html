@@ -1,0 +1,174 @@
+<html>
+<head>
+<title>Couch-to-5K Running Timer</title>
+<style type="text/css">
+body {
+	font-family: helvetica, arial, sans;
+}
+
+.run {
+	background-color: black;
+	color: white;
+}
+
+.walk {
+	background-color: white;
+	color: black;
+}
+
+.transitionA {
+	background-color: red;
+	color: white;
+}
+
+.transitionB {
+	background-color: white;
+	color: red;
+}
+</style>
+</head>
+<body>
+	<div class="runSetup">
+		<h1>Running Timer</h1>
+		<form>
+			<p><label for="ddlWeek">Week: </label>
+				<select name="ddlWeek" id="ddlWeek">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+				</select>
+			</p>
+			<p><label>Day: </label>
+				<input type="radio" name="radDay" value="1" checked> 1
+				<input type="radio" name="radDay" value="2"> 2
+				<input type="radio" name="radDay" value="3"> 3
+			</p>
+			<p><label for="chkWarmup">Include warm-up? </label><input type="checkbox" name="chkWarmup" id="chkWarmup" checked></p>
+			<p><input type="button" value="Start!" name="btnStart" id="btnStart"></p>
+		</form>
+	</div>
+	<div class="runDisplay">
+		<h1></h1>
+		<div class="runIndicator">
+		</div>
+		<div class="runCountdown">
+		</div>
+		<div class="runControl">
+			<p><input type="button" value="Start Over" name="btnRestart" id="btnRestart"></p>
+		</div>
+	</div>
+<script src="jquery-1.6.4.min.js"></script>
+<script type="text/javascript">
+	$('.runDisplay').hide();
+	
+	var RT = {
+		setup : {},
+		warmupDuration : 5,
+		cooldownDuration : 5
+	};
+
+	var runProgram = function() { 
+		RT.setup = readSetup();
+		$('.runSetup').hide();
+		displayHeading(RT.setup.week, RT.setup.day);
+		$('.runDisplay').show();
+		warmup(RT.setup);
+	};
+	
+	var restartProgram = function() {
+		location.reload();
+	}
+	
+	var readSetup = function() {
+		return {
+			week : $('#ddlWeek').val(),
+			day : $('input:radio[name=radDay]:checked').val(),
+			includeWarmup : $('#chkWarmup:checked').val() !== undefined
+		};
+	};
+	
+	var displayHeading = function(week, day) {
+		$('.runDisplay h1').text('Week ' + week + ', Day ' + day);
+	};
+	
+	var warmup = function(setup) {
+		if (setup.includeWarmup) {
+			transition(function() { walk('Warm Up'); });
+			window.setTimeout(function() {transition(function() { exercise(setup); })}, minToMilli(RT.warmupDuration));
+		} else {
+			transition(function() { exercise(setup); });
+		}
+	}
+	
+	var exercise = function(setup) {
+		var workout = getWorkout(setup.week, setup.day);
+		doExercise(workout, 0);
+	}
+	
+	var cooldown = function() {
+		walk('Cool Down');
+		window.setTimeout(function() { transition(function() { walk('Done!'); })}, minToMilli(RT.cooldownDuration));
+	}
+	
+	var doExercise = function(workout, i) {
+		workout[i].mode();
+		if (i === workout.length - 1) {
+			window.setTimeout(function() { transition(cooldown) }, minToMilli(workout[i].minutes));
+		} else {
+			window.setTimeout(function() { transition(function() { doExercise(workout, i + 1); })}, minToMilli(workout[i].minutes));
+		}
+	}
+	
+	var getWorkout = function(week, day) {
+		return eval('C25K.W' + week + 'D' + day);
+	}
+	
+	var transition = function(callback) {
+		var indicatorDiv = $('.runCountdown');
+		var body = $(document.body);
+		transitionBlink(6, indicatorDiv, body, callback);
+	}
+	
+	var transitionBlink = function(transitionStage, indicatorDiv, body, callback) {
+		if (transitionStage > 0) {
+			if (transitionStage % 2 === 0) {
+				body.attr('class', 'transitionA');
+				indicatorDiv.text(transitionStage / 2 + '...');
+			} else {
+				body.attr('class', 'transitionB');
+			}
+			window.setTimeout(function() { transitionBlink(transitionStage - 1, indicatorDiv, body, callback) }, 500);
+		} else {
+			indicatorDiv.text('');
+			window.setTimeout(callback(), 500);
+		}
+	}
+		
+	var minToMilli = function(minutes) {
+		return minutes * 60 * 1000;
+	}
+		
+	var walk = function() {
+			var walkText = arguments[0] || 'Walk';
+			$(document.body).attr('class', 'walk');
+			$('.runIndicator').text(walkText);
+	}
+	
+	var run = function() {
+			$(document.body).attr('class', 'run');
+			$('.runIndicator').text('Run');
+	}
+	
+	$('#btnStart').click(runProgram);
+	$('#btnRestart').click(restartProgram);
+
+</script>
+<script src="workouts.js"></script>
+</body>
+</html>
