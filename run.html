@@ -126,7 +126,8 @@ body {
 	}
 	
 	var getWorkout = function(week, day) {
-		return eval('C25K.W' + week + 'D' + day);
+		var wd = week + day; //concatenate as a two-digit number.
+		return C25K[wd];
 	}
 	
 	var transition = function(callback) {
@@ -167,7 +168,6 @@ body {
 	
 	$('#btnStart').click(runProgram);
 	$('#btnRestart').click(restartProgram);
-
 </script>
 <script src="workouts.js"></script>
 </body>

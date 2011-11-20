@@ -54,74 +54,73 @@ var week4 = [
 	{ mode: run, minutes: 5 }
 ];
 
-var C25K = {
-	W1D1 : week1,
-	W1D2 : week1,
-	W1D3 : week1,
-	W2D1: week2,
-	W2D2: week2,
-	W2D3: week2,
-	W3D1: week3,
-	W3D2: week3,
-	W3D3: week3,
-	W4D1: week4,
-	W4D2: week4,
-	W4D3: week4,
-	W5D1 : [
-		{ mode: run, minutes: 5 },
-		{ mode: walk, minutes: 3 },
-		{ mode: run, minutes: 5 },
-		{ mode: walk, minutes: 3 },
-		{ mode: run, minutes: 5 }
-	],
-	W5D2 : [
-		{ mode: run, minutes: 8 },
-		{ mode: walk, minutes: 5 },
-		{ mode: run, minutes: 8 }
-	],
-	W5D3 : [
-		{ mode: run, minutes: 20 }
-	],
-	W6D1 : [
-		{ mode: run, minutes: 5 },
-		{ mode: walk, minutes: 3 },
-		{ mode: run, minutes: 8 },
-		{ mode: walk, minutes: 3 },
-		{ mode: run, minutes: 5 }
-	],
-	W6D2 : [
-		{ mode: run, minutes: 10 },
-		{ mode: walk, minutes: 3 },
-		{ mode: run, minutes: 10 }
-	],
-	W6D3 : [
-		{ mode: run, minutes: 25 }
-	],
-	W7D1 : [
-		{ mode: run, minutes: 25 }
-	],
-	W7D2 : [
-		{ mode: run, minutes: 25 }
-	],
-	W7D3 : [
-		{ mode: run, minutes: 25 }
-	],
-	W8D1 : [
-		{ mode: run, minutes: 28 }
-	],
-	W8D2 : [
-		{ mode: run, minutes: 28 }
-	],
-	W8D3 : [
-		{ mode: run, minutes: 28 }
-	],
-	W9D1 : [
-		{ mode: run, minutes: 30 }
-	],
-	W9D2 : [
-		{ mode: run, minutes: 30 }
-	],
-	W9D3 : [
-		{ mode: run, minutes: 30 }
-	]
-};
+var C25K = new Array();
+C25K[11] = week1;
+C25K[12] = week1;
+C25K[13] = week1;
+C25K[21] = week2;
+C25K[22] = week2;
+C25K[23] = week2;
+C25K[31] = week3;
+C25K[32] = week3;
+C25K[33] = week3;
+C25K[41] = week4;
+C25K[42] = week4;
+C25K[43] = week4;
+C25K[51] = [
+	{ mode: run, minutes: 5 },
+	{ mode: walk, minutes: 3 },
+	{ mode: run, minutes: 5 },
+	{ mode: walk, minutes: 3 },
+	{ mode: run, minutes: 5 }
+];
+C25K[52] = [
+	{ mode: run, minutes: 8 },
+	{ mode: walk, minutes: 5 },
+	{ mode: run, minutes: 8 }
+];
+C25K[53] = [
+	{ mode: run, minutes: 20 }
+];
+C25K[61] = [
+	{ mode: run, minutes: 5 },
+	{ mode: walk, minutes: 3 },
+	{ mode: run, minutes: 8 },
+	{ mode: walk, minutes: 3 },
+	{ mode: run, minutes: 5 }
+];
+C25K[62] = [
+	{ mode: run, minutes: 10 },
+	{ mode: walk, minutes: 3 },
+	{ mode: run, minutes: 10 }
+];
+C25K[63] = [
+	{ mode: run, minutes: 25 }
+];
+C25K[71] = [
+	{ mode: run, minutes: 25 }
+];
+C25K[72] = [
+	{ mode: run, minutes: 25 }
+];
+C25K[73] = [
+	{ mode: run, minutes: 25 }
+];
+C25K[81] = [
+	{ mode: run, minutes: 28 }
+];
+C25K[82] = [
+	{ mode: run, minutes: 28 }
+];
+C25K[83] = [
+	{ mode: run, minutes: 28 }
+];
+C25K[91] = [
+	{ mode: run, minutes: 30 }
+];
+C25K[92] = [
+	{ mode: run, minutes: 30 }
+];
+C25K[93] = [
+	{ mode: run, minutes: 30 }
+];
