@@ -54,7 +54,7 @@ var week4 = [
 	{ mode: run, minutes: 5 }
 ];
 
-var C25K = new Array();
+var C25K = [];
 C25K[11] = week1;
 C25K[12] = week1;
 C25K[13] = week1;
