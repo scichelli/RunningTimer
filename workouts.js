@@ -1,3 +1,14 @@
+var walk = function() {
+		var walkText = arguments[0] || 'Walk';
+		$(document.body).attr('class', 'walk');
+		$('.runIndicator').text(walkText);
+}
+
+var run = function() {
+		$(document.body).attr('class', 'run');
+		$('.runIndicator').text('Run');
+}
+	
 var week1 = [
 		{ mode: run, minutes: 1 },
 		{ mode: walk, minutes: 1.5 },

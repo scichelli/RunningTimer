@@ -94,11 +94,31 @@ body {
 				};
 			};
 			
+			this.walk = function() {
+				showWalk();
+			}
+			
+			this.run = function() {
+				showRun();
+			}
+			
+			this.warmup = function() {
+				showWalk('Warm Up');
+			}
+			
+			this.cooldown = function() {
+				showWalk('Cool Down');
+			}
+			
+			this.done = function() {
+				showWalk('Done!');
+			}
+			
 			this.transition = function(callback) {
 				var indicatorDiv = $('.runCountdown');
 				var body = $(document.body);
 				transitionBlink(6, indicatorDiv, body, callback);
-			}
+			};
 			
 			var transitionBlink = function(transitionStage, indicatorDiv, body, callback) {
 				if (transitionStage > 0) {
@@ -113,7 +133,18 @@ body {
 					indicatorDiv.text('');
 					window.setTimeout(callback(), 500);
 				}
-			}
+			};
+			
+			var showWalk = function() {
+				var walkText = arguments[0] || 'Walk';
+				$(document.body).attr('class', 'walk');
+				$('.runIndicator').text(walkText);
+			};
+			
+			var showRun = function() {
+				$(document.body).attr('class', 'run');
+				$('.runIndicator').text('Run');
+			};
 		}
 		
 		var TimerHelper = function(UI) {
@@ -136,7 +167,7 @@ body {
 			
 			var warmup = function(setup) {
 				if (setup.includeWarmup) {
-					UI.transition(function() { walk('Warm Up'); });
+					UI.transition(function() { UI.warmup(); });
 					window.setTimeout(function() {UI.transition(function() { exercise(setup); })}, minToMilli(RT.warmupDuration));
 				} else {
 					UI.transition(function() { exercise(setup); });
@@ -149,8 +180,8 @@ body {
 			}
 			
 			var cooldown = function() {
-				walk('Cool Down');
-				window.setTimeout(function() { UI.transition(function() { walk('Done!'); })}, minToMilli(RT.cooldownDuration));
+				UI.cooldown();
+				window.setTimeout(function() { UI.transition(function() { UI.done(); })}, minToMilli(RT.cooldownDuration));
 			}
 			
 			var doExercise = function(workout, i) {
@@ -173,17 +204,6 @@ body {
 		}
 		return Timer;
 	})();
-	
-	var walk = function() {
-			var walkText = arguments[0] || 'Walk';
-			$(document.body).attr('class', 'walk');
-			$('.runIndicator').text(walkText);
-	}
-	
-	var run = function() {
-			$(document.body).attr('class', 'run');
-			$('.runIndicator').text('Run');
-	}
 	
 	var runTimer = new RunningTimer();
 	$('#btnStart').click(runTimer.runProgram);
