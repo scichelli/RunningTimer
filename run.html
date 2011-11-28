@@ -76,8 +76,10 @@ body {
 		}
 		
 		var UI = function() {
-			this.displayHeading = function(week, day) {
+			this.displayRunHeading = function(week, day) {
+				$('.runSetup').hide();
 				$('.runDisplay h1').text('Week ' + week + ', Day ' + day);
+				$('.runDisplay').show();
 			};
 			
 			this.restart = function() {
@@ -124,9 +126,7 @@ body {
 
 			this.runProgram = function() { 
 				RT.setup = UI.readSetup();
-				$('.runSetup').hide();
-				UI.displayHeading(RT.setup.week, RT.setup.day);
-				$('.runDisplay').show();
+				UI.displayRunHeading(RT.setup.week, RT.setup.day);
 				warmup(RT.setup);
 			};
 			
