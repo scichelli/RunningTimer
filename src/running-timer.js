@@ -1,7 +1,11 @@
 RunningTimer = (function() {
 	var Timer = function() {
+		var config = {
+			warmupDuration : 5,
+			cooldownDuration : 5
+		};
 		var ui = new UI();
-		var timerHelper = new TimerHelper(ui);
+		var timerHelper = new TimerHelper(ui, config);
 		this.runProgram = timerHelper.runProgram;
 		this.restartProgram = timerHelper.restartProgram;
 	}
@@ -78,18 +82,12 @@ RunningTimer = (function() {
 		};
 	}
 	
-	var TimerHelper = function(UI) {
+	var TimerHelper = function(UI, config) {
 	
-		var RT = {
-			setup : {},
-			warmupDuration : 5,
-			cooldownDuration : 5
-		};
-
 		this.runProgram = function() { 
-			RT.setup = UI.readSetup();
-			UI.displayRunHeading(RT.setup.week, RT.setup.day);
-			warmup(RT.setup);
+			var setup = UI.readSetup();
+			UI.displayRunHeading(setup.week, setup.day);
+			warmup(setup);
 		};
 		
 		this.restartProgram = function() {
@@ -99,7 +97,7 @@ RunningTimer = (function() {
 		var warmup = function(setup) {
 			if (setup.includeWarmup) {
 				UI.transition(function() { UI.warmup(); });
-				window.setTimeout(function() {UI.transition(function() { exercise(setup); })}, minToMilli(RT.warmupDuration));
+				window.setTimeout(function() {UI.transition(function() { exercise(setup); })}, minToMilli(config.warmupDuration));
 			} else {
 				UI.transition(function() { exercise(setup); });
 			}
@@ -112,7 +110,7 @@ RunningTimer = (function() {
 		
 		var cooldown = function() {
 			UI.cooldown();
-			window.setTimeout(function() { UI.transition(function() { UI.done(); })}, minToMilli(RT.cooldownDuration));
+			window.setTimeout(function() { UI.transition(function() { UI.done(); })}, minToMilli(config.cooldownDuration));
 		}
 		
 		var doExercise = function(workout, i) {
