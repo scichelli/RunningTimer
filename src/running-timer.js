@@ -1,135 +1,124 @@
-RunningTimer = (function() {
-	var Timer = function() {
-		var config = {
-			warmupDuration : 5,
-			cooldownDuration : 5
-		};
-		var ui = new UI();
-		var timerHelper = new TimerHelper(ui, config);
-		this.runProgram = timerHelper.runProgram;
-		this.restartProgram = timerHelper.restartProgram;
+var RT = {};
+
+RT.config = { 
+	warmupDuration : 5,
+	cooldownDuration : 5
+};
+
+RT.View = {};
+RT.View.displayRunHeading = function(week, day) {
+	$('.runSetup').hide();
+	$('.runDisplay h1').text('Week ' + week + ', Day ' + day);
+	$('.runDisplay').show();
+};
+		
+RT.View.restart = function() {
+	location.reload();
+};
+		
+RT.View.readSetup = function() {
+	return {
+		week : $('#ddlWeek').val(),
+		day : $('input:radio[name=radDay]:checked').val(),
+		includeWarmup : $('#chkWarmup:checked').val() !== undefined
+	};
+};
+		
+RT.View.walk = function() {
+	RT.View.showWalk();
+}
+
+RT.View.run = function() {
+	RT.View.showRun();
+}
+		
+RT.View.warmup = function() {
+	RT.View.showWalk('Warm Up');
+}
+		
+RT.View.cooldown = function() {
+	RT.View.showWalk('Cool Down');
+}
+		
+RT.View.done = function() {
+	RT.View.showWalk('Done!');
+}
+		
+RT.View.transition = function(callback) {
+	var indicatorDiv = $('.runCountdown');
+	var body = $(document.body);
+	RT.View.transitionBlink(6, indicatorDiv, body, callback);
+};
+		
+RT.View.transitionBlink = function(transitionStage, indicatorDiv, body, callback) {
+	if (transitionStage > 0) {
+		if (transitionStage % 2 === 0) {
+			body.attr('class', 'transitionA');
+			indicatorDiv.text(transitionStage / 2 + '...');
+		} else {
+			body.attr('class', 'transitionB');
+		}
+		window.setTimeout(function() { RT.View.transitionBlink(transitionStage - 1, indicatorDiv, body, callback) }, 500);
+	} else {
+		indicatorDiv.text('');
+		window.setTimeout(callback(), 500);
 	}
-	
-	var UI = function() {
-		this.displayRunHeading = function(week, day) {
-			$('.runSetup').hide();
-			$('.runDisplay h1').text('Week ' + week + ', Day ' + day);
-			$('.runDisplay').show();
-		};
+};
 		
-		this.restart = function() {
-			location.reload();
-		};
+RT.View.showWalk = function() {
+	var walkText = arguments[0] || 'Walk';
+	$(document.body).attr('class', 'walk');
+	$('.runIndicator').text(walkText);
+};
 		
-		this.readSetup = function() {
-			return {
-				week : $('#ddlWeek').val(),
-				day : $('input:radio[name=radDay]:checked').val(),
-				includeWarmup : $('#chkWarmup:checked').val() !== undefined
-			};
-		};
+RT.View.showRun = function() {
+	$(document.body).attr('class', 'run');
+	$('.runIndicator').text('Run');
+};
+
+RT.runProgram = function() { 
+	var setup = RT.View.readSetup();
+	RT.View.displayRunHeading(setup.week, setup.day);
+	RT.warmup(setup);
+};
 		
-		this.walk = function() {
-			showWalk();
-		}
+RT.restartProgram = function() {
+	RT.View.restart();
+};
 		
-		this.run = function() {
-			showRun();
-		}
-		
-		this.warmup = function() {
-			showWalk('Warm Up');
-		}
-		
-		this.cooldown = function() {
-			showWalk('Cool Down');
-		}
-		
-		this.done = function() {
-			showWalk('Done!');
-		}
-		
-		this.transition = function(callback) {
-			var indicatorDiv = $('.runCountdown');
-			var body = $(document.body);
-			transitionBlink(6, indicatorDiv, body, callback);
-		};
-		
-		var transitionBlink = function(transitionStage, indicatorDiv, body, callback) {
-			if (transitionStage > 0) {
-				if (transitionStage % 2 === 0) {
-					body.attr('class', 'transitionA');
-					indicatorDiv.text(transitionStage / 2 + '...');
-				} else {
-					body.attr('class', 'transitionB');
-				}
-				window.setTimeout(function() { transitionBlink(transitionStage - 1, indicatorDiv, body, callback) }, 500);
-			} else {
-				indicatorDiv.text('');
-				window.setTimeout(callback(), 500);
-			}
-		};
-		
-		var showWalk = function() {
-			var walkText = arguments[0] || 'Walk';
-			$(document.body).attr('class', 'walk');
-			$('.runIndicator').text(walkText);
-		};
-		
-		var showRun = function() {
-			$(document.body).attr('class', 'run');
-			$('.runIndicator').text('Run');
-		};
+RT.warmup = function(setup) {
+	if (setup.includeWarmup) {
+		RT.View.transition(function() { RT.View.warmup(); });
+		window.setTimeout(function() {RT.View.transition(function() { RT.exercise(setup); })}, RT.minToMilli(RT.config.warmupDuration));
+	} else {
+		RT.View.transition(function() { RT.exercise(setup); });
 	}
-	
-	var TimerHelper = function(UI, config) {
-	
-		this.runProgram = function() { 
-			var setup = UI.readSetup();
-			UI.displayRunHeading(setup.week, setup.day);
-			warmup(setup);
-		};
+};
 		
-		this.restartProgram = function() {
-			UI.restart();
-		}
+RT.exercise = function(setup) {
+	var workout = RT.getWorkout(setup.week, setup.day);
+	RT.doExercise(workout, 0);
+};
 		
-		var warmup = function(setup) {
-			if (setup.includeWarmup) {
-				UI.transition(function() { UI.warmup(); });
-				window.setTimeout(function() {UI.transition(function() { exercise(setup); })}, minToMilli(config.warmupDuration));
-			} else {
-				UI.transition(function() { exercise(setup); });
-			}
-		}
+RT.cooldown = function() {
+	RT.View.cooldown();
+	window.setTimeout(function() { RT.View.transition(function() { RT.View.done(); })}, RT.minToMilli(RT.config.cooldownDuration));
+};
 		
-		var exercise = function(setup) {
-			var workout = getWorkout(setup.week, setup.day);
-			doExercise(workout, 0);
-		}
+RT.doExercise = function(workout, i) {
+	workout[i].mode();
+	if (i === workout.length - 1) {
+		window.setTimeout(function() { RT.View.transition(cooldown) }, RT.minToMilli(workout[i].minutes));
+	} else {
+		window.setTimeout(function() { RT.View.transition(function() { RT.doExercise(workout, i + 1); })}, RT.minToMilli(workout[i].minutes));
+	}
+};
 		
-		var cooldown = function() {
-			UI.cooldown();
-			window.setTimeout(function() { UI.transition(function() { UI.done(); })}, minToMilli(config.cooldownDuration));
-		}
-		
-		var doExercise = function(workout, i) {
-			workout[i].mode();
-			if (i === workout.length - 1) {
-				window.setTimeout(function() { UI.transition(cooldown) }, minToMilli(workout[i].minutes));
-			} else {
-				window.setTimeout(function() { UI.transition(function() { doExercise(workout, i + 1); })}, minToMilli(workout[i].minutes));
-			}
-		}
-		
-		var getWorkout = function(week, day) {
-			var wd = week + day; //concatenate as a two-digit number.
-			return C25K[wd];
-		}
+RT.getWorkout = function(week, day) {
+	var wd = week + day; //concatenate as a two-digit number.
+	return C25K[wd];
+};
 			
-		var minToMilli = function(minutes) {
-			return minutes * 60 * 1000;
-		}
-	}
-	return Timer;
-})();
+RT.minToMilli = function(minutes) {
+	return minutes * 60 * 1000;
+};

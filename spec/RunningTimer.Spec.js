@@ -1,11 +1,9 @@
 describe("RunningTimer", function() {
-	var timer;
 	
 	beforeEach(function() {
-		timer = new RunningTimer();
+//set up jasmine spies
 	});
 	
-	it("should initialize a running timer", function() {
-		expect(timer).not.toBeUndefined();
+	it("should interact with the fake view", function() {
 	});
 });
